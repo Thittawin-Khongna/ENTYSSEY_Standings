@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ENTYSSEY</title>
+    
+    <!-- นำเข้า Tailwind CSS สำหรับการจัด Layout และ UI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- นำเข้าฟอนต์ Montserrat ให้ดูมีความเป็นสปอร์ตและทันสมัย -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                    },
+                    colors: {
+                        wc: {
+                            purple: '#6b21a8', 
+                            red: '#e11d48',
+                            green: '#059669',
+                            blue: '#2563eb',
+                            navy: '#0a0a2a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- ========================================== -->
+    <!-- 🎨 โซนที่ 1: CSS (สำหรับตกแต่งดีไซน์เพิ่มเติม) -->
+    <!-- หากคุณแยกไฟล์ ให้ก็อปปี้โค้ดในนี้ไปใส่ style.css -->
+    <!-- ========================================== -->
+    <style>
+        /* ตั้งค่าพื้นหลังสีเทาอ่อนมาก ให้ตัดกับกรอบสีขาว (Clean & Minimal) */
+        body {
+            background-color: #29292a; 
+            color: #1f2937;
+            -webkit-tap-highlight-color: transparent; /* เอาไฮไลต์เวลากดบนมือถือออก */
+        }
+        
+        /* แถบสีด้านบนสุดของหน้าเว็บ (Theme สีสันบอลโลก 2026) */
+        .wc-top-bar {
+            background: linear-gradient(90deg, #6b21a8 0%, #e11d48 33%, #eab308 66%, #059669 100%);
+            height: 6px;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 50;
+        }
+        
+        /* อนิเมชันเวลาโหลดการ์ดให้ค่อยๆ เลื่อนขึ้นมา */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card-animate {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        /* อนิเมชันสำหรับ Popup Modal ให้เด้งซูมขึ้นมา */
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.95) translateY(10px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        
+        .modal-animate {
+            animation: popIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+<body class="relative min-h-screen overflow-x-hidden font-sans pb-10">
+
+    <!-- ========================================== -->
+    <!-- 🏗️ โซนที่ 2: HTML (โครงสร้างหน้าเว็บและข้อความ) -->
+    <!-- ========================================== -->
+
+    <!-- แถบสีตกแต่งด้านบนสุด -->
+    <div class="wc-top-bar"></div>
+
+    <div class="max-w-md mx-auto bg-white min-h-screen shadow-2xl relative flex flex-col border-x border-gray-100">
+        
+        <!-- Header -->
+        <div class="px-6 pt-12 pb-6 text-center border-b border-gray-100 relative overflow-hidden bg-white">
+            <!-- ลายกราฟิกวงกลมจางๆ ด้านหลัง (มินิมอล ไม่รก) -->
+            <div class="absolute -top-10 -right-10 w-32 h-32 rounded-full border-[8px] border-slate-50 opacity-50 pointer-events-none"></div>
+            <div class="absolute -bottom-5 -left-5 w-20 h-20 rounded-full border-[6px] border-slate-50 opacity-50 pointer-events-none"></div>
+            
+            <!-- ใช้ h-[...] เพื่อกำหนดขนาดพิกเซลแบบเป๊ะๆ เช่น h-[45px] หรือ h-[100px] ปรับเลขได้ตามใจชอบเลยครับ -->
+            <img src="https://i.postimg.cc/Hs7Y7DDm/d-sin-th-y-ngmi-di-t-ngch-x-(13).png" alt="Event Logo" class="h-[100px] mx-auto mb-2 relative z-10 object-contain drop-shadow-md">
+            
+            <h2 class="text-[30px] font-bold tracking-[0.25em] uppercase relative z-10">
+                ENTYSSEY
+            </h2>
+
+            <h2 class="text-[15px] font-bold tracking-[0.25em] uppercase text-gray-400 mb-5">
+                ENT x DARA
+            </h2>
+
+            <!-- ป้ายกำกับหน้าเว็บ -->
+            <!-- เปลี่ยนจาก bg-slate-900 เป็นสีอื่น เช่น bg-wc-red, bg-blue-600 หรือใช้รหัสสีเป๊ะๆ แบบ bg-[#ff0000] -->
+            <div class="inline-block bg-wc-red text-white px-5 py-2 rounded-full shadow-sm relative z-10">
+                <h3 class="font-bold tracking-widest uppercase text-xs">STANDINGS</h3>
+            </div>
+        </div>
+
+        <!-- คอนเทนเนอร์ใส่รายชื่อทีม (จะถูกเติมด้วย JavaScript) -->
+        <div id="leaderboard-body" class="flex-1 px-4 py-5 flex flex-col gap-3 bg-slate-50/50">
+            <!-- รายชื่อทีมจะถูกวาดที่นี่ -->
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-auto py-8 text-center border-t border-gray-100 bg-white">
+            <!-- ปุ่มสำหรับแอดมิน ล็อกอิน -->
+            <button id="admin-toggle-btn" onclick="toggleAdmin()" class="text-[11px] text-gray-400 hover:text-gray-700 font-medium transition-colors flex items-center justify-center gap-1 mx-auto px-4 py-2 rounded-lg hover:bg-gray-50">
+                จะกดทำไม !!!
+            </button>
+        </div>
+    </div>
+
+    <!-- 🚀 โซน Popup สำหรับกรอกคะแนน (ซ่อนเป็นค่าเริ่มต้น) -->
+    <div id="money-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center px-4">
+        <!-- พื้นหลังสีดำโปร่งแสง (กดพื้นที่ว่างเพื่อปิดได้) -->
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
+        
+        <!-- ตัวกล่อง Popup -->
+        <div class="bg-white rounded-3xl w-full max-w-sm shadow-2xl relative z-10 overflow-hidden modal-animate border border-white/20">
+            <!-- Header ของ Popup (หัวตาราง) -->
+            <div class="bg-gradient-to-r from-slate-900 to-indigo-950 px-6 py-6 text-center relative">
+                <!-- ปุ่มกากบาท (ปิด) -->
+                <button onclick="closeModal()" class="absolute top-4 right-4 text-white/50 hover:text-white bg-white/10 hover:bg-white/20 transition-colors rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">✕</button>
+                <h3 class="text-white/70 text-[10px] font-bold tracking-[0.2em] uppercase mb-2">UPDATE MONEY</h3>
+                <div id="modal-team-name" class="text-white text-3xl font-black uppercase tracking-tight drop-shadow-md">TEAM</div>
+            </div>
+            
+            <div class="p-6 bg-slate-50/50">
+                <!-- ช่องสำหรับแสดงและพิมพ์ตัวเลข -->
+                <div class="relative mb-6">
+                    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                        <span class="text-slate-400 font-bold text-xl">฿</span>
+                    </div>
+                    <input type="number" id="modal-money-input" class="w-full text-center text-4xl font-black text-slate-800 bg-white border-2 border-slate-200 rounded-2xl py-4 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all shadow-sm" value="0">
+                </div>
+
+                <!-- กริดปุ่มบวกเงินด่วน (Quick Add) -->
+                <div class="grid grid-cols-2 gap-3 mb-6">
+                    <button onclick="modifyModalMoney(500)" class="bg-green-50 text-green-700 hover:bg-green-100 hover:border-green-300 font-black text-lg py-3 rounded-xl transition-all active:scale-95 shadow-sm border border-green-200">+500</button>
+                    <button onclick="modifyModalMoney(1000)" class="bg-green-50 text-green-700 hover:bg-green-100 hover:border-green-300 font-black text-lg py-3 rounded-xl transition-all active:scale-95 shadow-sm border border-green-200">+1,000</button>
+                    <button onclick="modifyModalMoney(1500)" class="bg-blue-50 text-blue-700 hover:bg-blue-100 hover:border-blue-300 font-black text-lg py-3 rounded-xl transition-all active:scale-95 shadow-sm border border-blue-200">+1,500</button>
+                    <button onclick="modifyModalMoney(2500)" class="bg-blue-50 text-blue-700 hover:bg-blue-100 hover:border-blue-300 font-black text-lg py-3 rounded-xl transition-all active:scale-95 shadow-sm border border-blue-200">+2,500</button>
+                </div>
+
+                <!-- ปุ่มบันทึกข้อมูล -->
+                <button onclick="saveModalMoney()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-lg py-4 rounded-xl shadow-lg transition-all active:scale-95 flex justify-center items-center gap-2">
+                    <span>💾 บันทึกการอัปเดต</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ⚙️ โซนที่ 3: JavaScript (ระบบแอดมิน จัดอันดับ) -->
+    <!-- หากคุณแยกไฟล์ ให้ก็อปปี้โค้ดในนี้ไปใส่ script.js -->
+    <!-- ========================================== -->
+    <script>
+        // --- ส่วนที่ต้องแก้ไข URL ---
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwB2wSLeRZ-53dEGUWF5fj8AjEGswVWSaOJpw7lsQ4xBdgF5K9de2WUPClGVJDX4Y2CZQ/exec";
+
+let teams = []; // เริ่มต้นเป็นค่าว่าง ระบบจะไปดึงมาจาก Sheets
+
+// ฟังก์ชันดึงข้อมูลจาก Google Sheets
+async function fetchData() {
+    try {
+        const response = await fetch(SCRIPT_URL);
+        teams = await response.json();
+        renderLeaderboard();
+    } catch (err) {
+        console.error("ไม่สามารถดึงข้อมูลได้:", err);
+    }
+}
+
+// ฟังก์ชันส่งข้อมูลกลับไปอัปเดต Google Sheets
+async function saveToGoogleSheets(id, newMoney) {
+    try {
+        await fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify({id: id, money: newMoney})
+        });
+        setTimeout(fetchData, 1000);
+    } catch (err) {
+        console.error("อัปเดตข้อมูลไม่ได้:", err);
+    }
+}
+
+// ฟังก์ชันเปิด Popup แก้ไขเงิน
+window.editMoney = (teamId) => {
+    if (!isAdmin) return;
+    const team = teams.find(t => t.id === teamId);
+    if (team) {
+        editingTeamId = team.id;
+        document.getElementById('modal-team-name').innerText = team.name;
+        document.getElementById('modal-money-input').value = team.money;
+        document.getElementById('money-modal').classList.remove('hidden');
+    }
+};
+
+window.saveModalMoney = () => {
+    const input = document.getElementById('modal-money-input');
+    const newMoney = parseInt(input.value, 10);
+    if (!isNaN(newMoney) && editingTeamId) {
+        saveToGoogleSheets(editingTeamId, newMoney);
+        closeModal();
+    }
+};
+
+window.closeModal = () => {
+    document.getElementById('money-modal').classList.add('hidden');
+    editingTeamId = null;
+};
+
+window.modifyModalMoney = (amount) => {
+    const input = document.getElementById('modal-money-input');
+    input.value = parseInt(input.value || 0) + amount;
+};
+
+// --- ฟังก์ชันหลักในการวาดตาราง ---
+const renderLeaderboard = () => {
+    teams.sort((a, b) => b.money - a.money);
+    const container = document.getElementById('leaderboard-body');
+    container.innerHTML = ''; 
+
+    teams.forEach((team, index) => {
+        let rankStyle = "text-gray-500 font-bold drop-shadow-sm";
+        if (index === 0) rankStyle = "text-yellow-500 font-black text-xl drop-shadow-md";
+        else if (index === 1) rankStyle = "text-slate-400 font-black text-xl drop-shadow-md";
+        else if (index === 2) rankStyle = "text-amber-600 font-black text-xl drop-shadow-md";
+
+        const moneyBtnStyle = isAdmin ? "bg-white/90 border border-white shadow-sm active:scale-95 cursor-pointer hover:bg-white" : "bg-white/50 text-slate-800 cursor-default";
+
+        const card = document.createElement('div');
+        card.className = `card-animate opacity-0 bg-gradient-to-r ${team.gradient} rounded-xl p-3 flex items-center shadow-sm border border-gray-100`;
+        card.style.animationDelay = `${index * 0.05}s`; 
+        
+        card.innerHTML = `
+            <div class="w-8 flex items-center justify-center shrink-0 ${rankStyle}">${index + 1}</div>
+            <div class="w-10 h-7 shrink-0 mx-2 shadow-sm border border-gray-200 overflow-hidden rounded-sm bg-white flex items-center justify-center">
+                <img src="${team.flagImg}" alt="${team.name} Flag" class="w-full h-full object-cover">
+            </div>
+            <div class="flex-1 flex flex-col justify-center truncate pr-2">
+                <span class="font-bold text-slate-800 uppercase leading-tight truncate text-sm">${team.name}</span>
+            </div>
+            <div class="shrink-0 flex items-center gap-1 px-3 py-2 rounded-lg transition-all duration-200 ${moneyBtnStyle}" 
+                 onclick="editMoney('${team.id}')">
+                <span class="${isAdmin ? 'text-green-600' : 'text-gray-400'} font-bold text-xs mt-0.5">฿</span>
+                <span class="font-black text-base">${formatMoney(team.money)}</span>
+                ${isAdmin ? '<span class="text-green-600 ml-1 text-xs">✎</span>' : ''}
+            </div>
+        `;
+        container.appendChild(card);
+    });
+};
+
+// ส่วนแอดมินและการตั้งค่าพื้นฐาน
+let isAdmin = false;
+const ADMIN_PIN = "1207"; 
+let editingTeamId = null;
+
+const formatMoney = (amount) => new Intl.NumberFormat('th-TH').format(amount);
+
+window.toggleAdmin = () => {
+    if (isAdmin) {
+        isAdmin = false;
+    } else {
+        const pin = prompt("รู้อะไรพูดมา");
+        if (pin === ADMIN_PIN) isAdmin = true;
+        else if (pin !== null) alert("มั่วละ");
+    }
+    updateUIState();
+};
+
+const updateUIState = () => {
+    const adminBtn = document.getElementById('admin-toggle-btn');
+    adminBtn.innerHTML = isAdmin ? "ออกจากหน้าแก้ไขเงิน" : "จะกดทำไม !!";
+    adminBtn.classList.toggle('text-red-400', isAdmin);
+    renderLeaderboard();
+};
+
+document.addEventListener('DOMContentLoaded', fetchData);
+    </script>
+</body>
+</html>
