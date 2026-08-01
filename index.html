@@ -142,9 +142,6 @@
             <div class="p-6 bg-slate-50/50">
                 <!-- ช่องสำหรับแสดงและพิมพ์ตัวเลข -->
                 <div class="relative mb-6">
-                    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                        <span class="text-slate-400 font-bold text-xl">P</span>
-                    </div>
                     <input type="number" id="modal-money-input" class="w-full text-center text-4xl font-black text-slate-800 bg-white border-2 border-slate-200 rounded-2xl py-4 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all shadow-sm" value="0">
                 </div>
 
@@ -258,7 +255,6 @@ const renderLeaderboard = () => {
             </div>
             <div class="shrink-0 flex items-center gap-1 px-3 py-2 rounded-lg transition-all duration-200 ${moneyBtnStyle}" 
                  onclick="editMoney('${team.id}')">
-                <span class="${isAdmin ? 'text-green-600' : 'text-gray-400'} font-bold text-xs mt-0.5">฿</span>
                 <span class="font-black text-base">${formatMoney(team.money)}</span>
                 ${isAdmin ? '<span class="text-green-600 ml-1 text-xs">✎</span>' : ''}
             </div>
